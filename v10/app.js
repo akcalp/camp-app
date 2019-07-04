@@ -14,7 +14,7 @@ const express = require("express"),
 //requiring routes
 const commentRoutes = require("./routes/comments"),
     campgroundRoutes = require("./routes/campgrounds"),
-    indexRoutes = require("./routes/index");
+    indexRoutes = require("./routes");
 
 
 mongoose.connect("mongodb://localhost:27017/camp_ground_v9", {useNewUrlParser: true});
@@ -24,6 +24,7 @@ app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
 
+app.locals.moment = require("moment");
 
 //PASSPORT config
 app.use(require("express-session")({
