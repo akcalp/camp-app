@@ -6,14 +6,31 @@ const middleware = require("../middleware");
 
 // index route
 router.get("/campgrounds", (req, res) => {
-    //Getting all campgrounds from DB
-    Campground.find({}, (err, allCampgrounds) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("campgrounds/index.ejs", {campgrounds: allCampgrounds});
-        }
-    });
+    if (req.query.search) {
+        const regex = new RegExp(escapeRegex(req.query.search), "gi");
+        //Getting all campgrounds from DB
+        Campground.find({name: regex} , (err, allCampgrounds) => {
+            if (err) {
+                console.log(err);
+            } else {
+                let noMatch;
+                if (allCampgrounds.length < 1 ){
+                    req.flash("error", "Campground not found");
+                    return res.redirect("back");
+                }
+                res.render("campgrounds/index.ejs", {campgrounds: allCampgrounds, noMatch: noMatch});
+            }
+        });
+    } else {
+        //Getting all campgrounds from DB
+        Campground.find({}, (err, allCampgrounds) => {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("campgrounds/index.ejs", {campgrounds: allCampgrounds});
+            }
+        });
+    }
 });
 
 //CREATE - adding new campground to DB
@@ -92,5 +109,8 @@ router.delete("/campgrounds/:id", middleware.checkCampgroundOwnership, (req, res
     })
 });
 
+function escapeRegex(text){
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 
 module.exports = router;
