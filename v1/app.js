@@ -1,6 +1,7 @@
-const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");
+const express = require("express"),
+    app = express(),
+    bodyParser = require("body-parser"),
+    mongoose = require("mongoose");
 
 var campgrounds = [
     {name: "Eugiena Falls", image: "https://farm4.staticflickr.com/3273/2602356334_20fbb23543.jpg"},
@@ -9,7 +10,31 @@ var campgrounds = [
 ];
 
 
+mongoose.connect("mongodb://localhost/camp_ground");
 app.use(bodyParser.urlencoded({extended: true}));
+
+//SCHEMA SETUP
+const campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String
+});
+
+const Campground = mongoose.model("Campground", campgroundSchema);
+
+Campground.create(
+    {
+        name: "Eugenia Falls",
+        image: "https://farm4.staticflickr.com/3273/2602356334_20fbb23543.jpg"
+    }, (err,campground) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log("Campground Created");
+            console.log(campground);
+        }
+    });
+
 
 app.get("/", (req, res) => {
     res.render("landing.ejs");
