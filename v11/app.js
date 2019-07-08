@@ -17,7 +17,14 @@ const commentRoutes = require("./routes/comments"),
     indexRoutes = require("./routes");
 
 
-mongoose.connect("mongodb://localhost:27017/camp_ground_v9", {useNewUrlParser: true});
+mongoose.connect("mongodb+srv://testingDB:ac.aJf3wJHtPxSB@cluster0-b272c.mongodb.net/test?retryWrites=true&w=majority", {
+    useNewUrlParser: true,
+    useCreateIndex: true
+}).then(() => {
+    console.log("Connected to DB!");
+}).catch(err => {
+    console.log("ERROR:", err.message);
+});
 mongoose.set('useFindAndModify', false);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
